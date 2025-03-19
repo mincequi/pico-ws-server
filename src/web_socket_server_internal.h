@@ -1,5 +1,4 @@
-#ifndef __WEB_SOCKET_SERVER_INTERNAL_H__
-#define __WEB_SOCKET_SERVER_INTERNAL_H__
+#pragma once
 
 #include <cstddef>
 #include <memory>
@@ -7,19 +6,19 @@
 
 #include "lwip/tcp.h"
 
-#include "pico_ws_server/web_socket_server.h"
+#include "http/HttpServer.h"
 #include "client_connection.h"
 
 // Not multicore safe
 class WebSocketServerInternal {
  public:
-  WebSocketServerInternal(WebSocketServer& server, uint32_t max_connections)
+  WebSocketServerInternal(HttpServer& server, uint32_t max_connections)
       : server(server), max_connections(max_connections) {}
 
-  void setConnectCallback(WebSocketServer::ConnectCallback cb) { connect_cb = cb; }
-  void setCloseCallback(WebSocketServer::CloseCallback cb) { close_cb = cb; }
-  void setMessageCallback(WebSocketServer::MessageCallback cb) { message_cb = cb; }
-  void setUserCallback(WebSocketServer::UserCallback cb, void* context) {
+  void setConnectCallback(HttpServer::ConnectCallback cb) { connect_cb = cb; }
+  void setCloseCallback(HttpServer::CloseCallback cb) { close_cb = cb; }
+  void setMessageCallback(HttpServer::MessageCallback cb) { message_cb = cb; }
+  void setUserCallback(HttpServer::UserCallback cb, void* context) {
     user_cb = cb;
     user_cb_context = context;
   }
@@ -45,13 +44,13 @@ class WebSocketServerInternal {
   bool onUser(ClientConnection* connection, struct pbuf* pb);
 
  private:
-  WebSocketServer& server;
+  HttpServer& server;
 
   uint32_t max_connections;
-  WebSocketServer::ConnectCallback connect_cb = nullptr;
-  WebSocketServer::MessageCallback message_cb = nullptr;
-  WebSocketServer::CloseCallback close_cb = nullptr;
-  WebSocketServer::UserCallback user_cb = nullptr;
+  HttpServer::ConnectCallback connect_cb = nullptr;
+  HttpServer::MessageCallback message_cb = nullptr;
+  HttpServer::CloseCallback close_cb = nullptr;
+  HttpServer::UserCallback user_cb = nullptr;
   void* user_cb_context = nullptr;
 
   struct tcp_pcb* listen_pcb = nullptr;
@@ -60,5 +59,3 @@ class WebSocketServerInternal {
   uint32_t getConnectionId(ClientConnection* connection);
   ClientConnection* getConnectionById(uint32_t conn_id);
 };
-
-#endif

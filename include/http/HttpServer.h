@@ -1,23 +1,24 @@
-#ifndef __PICO_WS_SERVER_WEB_SOCKET_SERVER_H__
-#define __PICO_WS_SERVER_WEB_SOCKET_SERVER_H__
+#pragma once
 
 #include <cstddef>
 #include <memory>
 #include <stdint.h>
 
+#include <common/Emitter.hpp>
+
 class WebSocketServerInternal;
 
 // Not multicore safe
-class WebSocketServer {
+class HttpServer : public Emitter<HttpServer> {
  public:
-  typedef void (*ConnectCallback)(WebSocketServer& server, uint32_t conn_id);
+  typedef void (*ConnectCallback)(HttpServer& server, uint32_t conn_id);
   // Note: data can be treated as a null-terminated string if expecting TEXT messages (an extra NULL byte is allocated)
-  typedef void (*MessageCallback)(WebSocketServer& server, uint32_t conn_id, const void *data, size_t len);
-  typedef void (*CloseCallback)(WebSocketServer& server, uint32_t conn_id);
-  typedef bool (*UserCallback)(WebSocketServer& server, uint32_t conn_id, struct pbuf* pb, void* context);
+  typedef void (*MessageCallback)(HttpServer& server, uint32_t conn_id, const void *data, size_t len);
+  typedef void (*CloseCallback)(HttpServer& server, uint32_t conn_id);
+  typedef bool (*UserCallback)(HttpServer& server, uint32_t conn_id, struct pbuf* pb, void* context);
 
-  WebSocketServer(uint32_t max_connections = 1);
-  ~WebSocketServer();
+  HttpServer(uint32_t max_connections = 1);
+  ~HttpServer();
 
   // Warning: connect/close callbacks may be called from cyw43 ISR context, use caution with shared data
   // and avoid acquiring mutexes (ideally, only access data that can rely on cyw43 context for exclusion)
@@ -57,5 +58,3 @@ class WebSocketServer {
   std::unique_ptr<WebSocketServerInternal> internal;
   void* callback_extra = nullptr;
 };
-
-#endif

@@ -7,7 +7,7 @@
 
 #include "client_connection.h"
 #include "debug.h"
-#include "pico_ws_server/cyw43_guard.h"
+#include "http/cyw43_guard.h"
 
 namespace {
 

@@ -5,16 +5,16 @@
 
 #include "pico_ws_server/web_socket_server.h"
 
-void on_connect(WebSocketServer& server, uint32_t conn_id) {
+void on_connect(HttpServer& server, uint32_t conn_id) {
   printf("WebSocket opened\n");
   server.sendMessage(conn_id, "hello");
 }
 
-void on_disconnect(WebSocketServer& server, uint32_t conn_id) {
+void on_disconnect(HttpServer& server, uint32_t conn_id) {
   printf("WebSocket closed\n");
 }
 
-void on_message(WebSocketServer& server, uint32_t conn_id, const void* data, size_t len) {
+void on_message(HttpServer& server, uint32_t conn_id, const void* data, size_t len) {
   printf("WebSocket message %d\n%s\n", (int)len, (char*)data);
 }
 
@@ -35,7 +35,7 @@ int main() {
   }
   printf("Connected.\n");
 
-  WebSocketServer server;
+  HttpServer server;
   server.setConnectCallback(on_connect);
   server.setCloseCallback(on_disconnect);
   server.setMessageCallback(on_message);
